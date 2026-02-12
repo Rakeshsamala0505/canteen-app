@@ -1,0 +1,64 @@
+/* Excel-style table */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+
+.orders-table thead {
+  background: #8b7355;
+  color: white;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 9px;
+  font-size: 14px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Fixed column widths */
+.col-serial { width: 50px; }
+.col-name   { width: 140px; }
+.col-qty    { width: 60px; }
+.col-phone  { width: 120px; }
+.col-status { width: 90px; }
+.col-action { width: 110px; } /* 🔒 stops shifting */
+
+/* Row states */
+.order-row.completed {
+  background: #d4edda;
+}
+
+/* Buttons */
+.order-btn {
+  width: 90px;   /* 🔒 same width always */
+  padding: 6px 0;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.order-btn.complete {
+  background: #28a745;
+  color: white;
+}
+
+.order-btn.unselect {
+  background: #ffc107;
+  color: #000;
+}
+
+.order-btn:hover {
+  opacity: 0.85;
+}
