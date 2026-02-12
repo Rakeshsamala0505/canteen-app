@@ -37,7 +37,8 @@ const today = new Date().toLocaleDateString("en-CA");
         setCanteenOpen(!!data.canteen_open);
         setSelectedMenu(Array.isArray(data.menu_items) ? data.menu_items : []);
         setBiryaniActive(!!data.biryani_active);
-setBiryaniEnd(!!data.biryani_end);
+setBiryaniEnd(data.biryani_active ? !!data.biryani_end : false);
+
       } else {
         await supabase
           .from("admin_state")
@@ -67,7 +68,12 @@ setBiryaniEnd(false);
 setBiryaniEnd(false);
     }
   };
-  const handleToggleBiryani = () => setBiryaniActive((prev) => !prev);
+const handleToggleBiryani = () => {
+  setBiryaniActive(prev => {
+    if (prev) setBiryaniEnd(false); // turning OFF → reset End
+    return !prev;
+  });
+};
   const handleToggleBiryaniEnd = () => {
   if (!biryaniActive) return; // only works when biryani ON
   setBiryaniEnd(prev => !prev);

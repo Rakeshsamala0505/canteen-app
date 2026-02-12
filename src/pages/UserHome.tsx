@@ -7,11 +7,16 @@ import "../styles/userHome.css";
 const UserHome = () => {
   const { user, profile } = useAuthContext();
 // 🔒 Order cutoff time (change later if needed)
-const BIRYANI_CUTOFF_HOUR = 11;
+const BIRYANI_CUTOFF_HOUR = 20;
 const BIRYANI_CUTOFF_MINUTE = 44;
 const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
 const [showBiryaniOverPopup, setShowBiryaniOverPopup] = useState(false);
 const [showCancelBlockedPopup, setShowCancelBlockedPopup] = useState(false);
+const [biryaniPopupShown, setBiryaniPopupShown] = useState(false);
+const [lastBiryaniEnd, setLastBiryaniEnd] = useState(false);
+const [prevBiryaniEnd, setPrevBiryaniEnd] = useState(false);
+
+const todayKey = `biryani_end_seen_${new Date().toISOString().split("T")[0]}`;
 
 const [closingPopup, setClosingPopup] = useState(false);
 
@@ -61,10 +66,18 @@ const today = todayObj.toISOString().split("T")[0];
   .limit(1);
 
 setMyOrder(orders?.[0] || null);
-if (state?.biryani_end && orders?.[0]?.menu === "Biryani")
- {
+const alreadySeen = localStorage.getItem(todayKey);
+
+if (
+  orders?.[0]?.menu === "Biryani" &&
+  state?.biryani_end === true &&
+  prevBiryaniEnd === false
+) {
   setShowBiryaniOverPopup(true);
 }
+setPrevBiryaniEnd(!!state?.biryani_end);
+
+
 
 
       // MENU IMAGES
@@ -80,12 +93,18 @@ if (state?.biryani_end && orders?.[0]?.menu === "Biryani")
       setLoadingPage(false);
 
     };
+    Object.keys(localStorage).forEach(key => {
+  if (key.startsWith("biryani_end_seen_") && key !== todayKey) {
+    localStorage.removeItem(key);
+  }
+});
+
 
     loadAll();
 
 const interval = setInterval(() => {
   loadAll();
-}, 2000); // refresh every 4 seconds
+}, 3000); // refresh every 4 seconds
 
 return () => clearInterval(interval);
 
