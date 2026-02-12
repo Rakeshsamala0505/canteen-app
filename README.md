@@ -280,14 +280,4 @@ src/
 - 🖼️ Image gallery for curries
 - 📧 Email confirmations
 
-## Support
 
-For issues, check the Supabase docs: https://supabase.com/docs
-
-## License
-
-MIT - Feel free to use this for your canteen!
-
----
-
-Built with ❤️ for IIMR Canteen
