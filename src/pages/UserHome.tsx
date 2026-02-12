@@ -85,7 +85,7 @@ if (state?.biryani_end && orders?.[0]?.menu === "Biryani")
 
 const interval = setInterval(() => {
   loadAll();
-}, 4000); // refresh every 4 seconds
+}, 2000); // refresh every 4 seconds
 
 return () => clearInterval(interval);
 
