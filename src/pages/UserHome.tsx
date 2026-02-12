@@ -458,12 +458,12 @@ if (myOrder) {
   </div>
 <div className="info-row">
     <span className="icon">📅</span>
-    <span className="label">Closed:</span>
+    <span className="label">Canteen Closed on:</span>
     <span className="value">Saturday & Sunday</span>
   </div>
   <div className="info-row">
     <span className="icon">📧</span>
-    <span className="label">Issues?</span>
+    <span className="label">Any Issues?</span>
     <a href="mailto:rakeshsamala0505@gmail.com" className="value">Mail Me</a>
   </div>
 
