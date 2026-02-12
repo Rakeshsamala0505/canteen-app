@@ -1,4 +1,4 @@
-# IIMR Canteen Ordering System
+# Canteen Ordering System
 
 A modern React + Vite application for managing canteen curry orders with admin controls and real-time updates powered by Supabase.
 
@@ -9,15 +9,11 @@ A modern React + Vite application for managing canteen curry orders with admin c
 - Place orders for up to 3 plates
 - Cancel orders before 12:00 PM cutoff
 - View order pickup status
-- See special notices and available extra plates
 
 🎛️ **Admin Portal**
 - Manages menu: select which curries to display
-- Toggle special day announcements
 - Control canteen open/closed status
-- Track available extra plates
-- Live orders management table with pickup tracking
-- Sees everything users see, plus admin controls
+- Live orders management table 
 
 🔐 **Authentication**
 - User signup with name, phone, email, password
@@ -27,7 +23,6 @@ A modern React + Vite application for managing canteen curry orders with admin c
 ⚡ **Real-Time Updates**
 - Live menu updates across all users
 - Real-time order status tracking
-- Instant pickup confirmation
 
 ## Tech Stack
 
@@ -37,7 +32,6 @@ A modern React + Vite application for managing canteen curry orders with admin c
 - **Storage**: Supabase Storage (for curry images)
 - **Styling**: Custom CSS with millet theme
 
-## Getting Started
 
 ### Prerequisites
 
