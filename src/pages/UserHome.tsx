@@ -83,25 +83,14 @@ if (state?.biryani_end && orders?.[0]?.menu === "Biryani")
 
     loadAll();
 
-   const channel = supabase
-  .channel("live_updates")
-  .on(
-    "postgres_changes",
-    { event: "*", schema: "public", table: "admin_state" },
-    loadAll
-  )
-  .on(
-    "postgres_changes",
-    { event: "*", schema: "public", table: "orders" },
-    loadAll
-  )
-  .subscribe();
+const interval = setInterval(() => {
+  loadAll();
+}, 4000); // refresh every 4 seconds
 
+return () => clearInterval(interval);
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user?.id]);
+  }, 
+  [user?.id]);
 
 const isAfterCutoff = () => {
   const now = new Date();
