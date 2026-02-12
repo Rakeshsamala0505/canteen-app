@@ -33,6 +33,19 @@ const SignUp = () => {
       if (formData.password.length < 6) {
         throw new Error("Password must be at least 6 characters");
       }
+      // 🔍 Check if user already exists in users table
+const { data: existingUser } = await supabase
+  .from("users")
+  .select("id")
+  .eq("email", formData.email)
+  .maybeSingle();
+
+if (existingUser) {
+  setDuplicateEmail(true);
+  setLoading(false);
+  return;
+}
+
 
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
@@ -186,8 +199,8 @@ const SignUp = () => {
       marginBottom: "0",
     },
     link: {
-      color: "#c9a86a",
-      textDecoration: "none",
+      color: "#ff0000",
+      textDecoration: "underline",
       fontWeight: "600",
       transition: "color 0.2s ease",
     },
