@@ -62,8 +62,9 @@ const today = todayObj.toISOString().split("T")[0];
   .from("orders")
   .select("*")
   .eq("user_id", user!.id)
-  .order("created_at", { ascending: false })
+  .eq("date", today)   // 👈 THIS LINE FIXES EVERYTHING
   .limit(1);
+
 
 setMyOrder(orders?.[0] || null);
 const alreadySeen = localStorage.getItem(todayKey);
@@ -352,11 +353,11 @@ if (myOrder) {
 
   </div>
 )}
-{myOrder && myOrder.menu === "Biryani" && (
+{canteenOpen && biryaniAvailable && myOrder && myOrder.menu === "Biryani" && (
   <div className="order-confirm-card">
 
     <div className="order-confirm-info">
-      <h3>✅ Order Confirme</h3>
+      <h3>✅ Order Confirmed</h3>
 
       <p><b>Name:</b> {myOrder.user_name}</p>
       <p><b>Quantity:</b> {myOrder.quantity}</p>
