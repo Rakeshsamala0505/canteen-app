@@ -12,8 +12,6 @@ const BIRYANI_CUTOFF_MINUTE = 44;
 const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
 const [showBiryaniOverPopup, setShowBiryaniOverPopup] = useState(false);
 const [showCancelBlockedPopup, setShowCancelBlockedPopup] = useState(false);
-const [biryaniPopupShown, setBiryaniPopupShown] = useState(false);
-const [lastBiryaniEnd, setLastBiryaniEnd] = useState(false);
 const [prevBiryaniEnd, setPrevBiryaniEnd] = useState(false);
 
 const todayKey = `biryani_end_seen_${new Date().toISOString().split("T")[0]}`;
@@ -67,7 +65,6 @@ const today = todayObj.toISOString().split("T")[0];
 
 
 setMyOrder(orders?.[0] || null);
-const alreadySeen = localStorage.getItem(todayKey);
 
 if (
   orders?.[0]?.menu === "Biryani" &&
