@@ -138,6 +138,15 @@ const unselectOrder = async (orderId: number) => {
     )
   );
 };
+const refreshOrders = async () => {
+  const { data } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("date", menuDate)   // important: only today
+    .order("created_at", { ascending: false });
+
+  setLiveOrders(data || []);
+};
 
 const totalQuantity = liveOrders
   .filter(o => o.menu === "Biryani")
@@ -411,7 +420,12 @@ if (loadingPage) {
       {/* Footer: always visible at the bottom with Save and Logout buttons */}
       <footer className="admin-footer-mobile">
         <button className="footer-btn logout-btn" onClick={handleLogout}>Logout</button>
-        <span className="footer-center">© {new Date().getFullYear()} Canteen Admin</span>
+        <button
+    className="footer-btn refresh-btn"
+    onClick={refreshOrders}
+  >
+    🔄 Refresh
+  </button>
         <button className="footer-btn save-btn" onClick={handleSave}>Save</button>
         {showSaved && (
           <div style={{
