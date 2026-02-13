@@ -261,6 +261,7 @@ if (loadingPage) {
             marginTop: 6,
             fontWeight: 600,
             color: "#8b7355",
+            fontSize: 12,
           }}
         >
           {index + 1}) {item}
@@ -281,7 +282,7 @@ if (loadingPage) {
             Remove
           </button>
 
-          {menuImages[item] && (
+          {/* {menuImages[item] && (
             <img
               src={menuImages[item]}
               alt={item}
@@ -290,7 +291,7 @@ if (loadingPage) {
                 borderRadius: 8,
               }}
             />
-          )}
+          )} */}
         </div>
       ))}
     </div>
@@ -306,7 +307,7 @@ if (loadingPage) {
                       borderRadius: 8,
                       border: "none",
                       fontWeight: 700,
-                      minWidth: 120,
+                      width: 120,
                     }}
                     onClick={handleToggleBiryani}
                   >
@@ -320,7 +321,7 @@ if (loadingPage) {
     borderRadius: 8,
     border: "none",
     fontWeight: 700,
-    minWidth: 170,
+    width: 120,
   }}
   onClick={handleToggleBiryaniEnd}
 >

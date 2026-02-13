@@ -34,7 +34,7 @@ body {
 
 /* Enforce mobile-only layout */
 html, body, #root, .App {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   max-width: 480px;
   margin: 0 auto;
