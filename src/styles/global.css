@@ -306,10 +306,6 @@ header {
   cursor: pointer;
 }
 
-.orders-table tbody tr:hover {
-  background-color: var(--background);
-}
-
 .orders-table tbody tr.picked-up {
   background-color: #d4edda;
 }

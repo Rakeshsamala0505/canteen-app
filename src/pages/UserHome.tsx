@@ -7,7 +7,7 @@ import "../styles/userHome.css";
 const UserHome = () => {
   const { user, profile } = useAuthContext();
 // 🔒 Order cutoff time (change later if needed)
-const BIRYANI_CUTOFF_HOUR = 20;
+const BIRYANI_CUTOFF_HOUR = 13;
 const BIRYANI_CUTOFF_MINUTE = 44;
 const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
 const [showBiryaniOverPopup, setShowBiryaniOverPopup] = useState(false);
@@ -356,7 +356,7 @@ if (myOrder) {
   <div className="order-confirm-card">
 
     <div className="order-confirm-info">
-      <h3>✅ Order Confirmed</h3>
+      <h3>✅ Order Confirme</h3>
 
       <p><b>Name:</b> {myOrder.user_name}</p>
       <p><b>Quantity:</b> {myOrder.quantity}</p>
