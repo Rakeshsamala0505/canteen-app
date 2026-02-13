@@ -214,7 +214,7 @@ if (loadingPage) {
                     value=""
                     onChange={(e) => handleMenuChange(e.target.value)}
                     style={{
-                      width: "100%",
+                      width: "80%",
                       marginTop: 4,
                       borderRadius: 8,
                       padding: "6px 8px",
@@ -242,9 +242,9 @@ if (loadingPage) {
       style={{
         fontWeight: 700,
         textDecoration: "underline",
-        marginBottom: 6,
+        marginBottom: 0,
         color: "#5a4328",
-        fontSize: 16,
+        fontSize: 12,
       }}
     >
       Today's Menu
