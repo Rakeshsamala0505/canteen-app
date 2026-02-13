@@ -123,7 +123,7 @@
 /* keep real image size — NO cropping */
 .menu-img-ui {
   width: auto;
-  height: 220px;          /* very important */
+  height: auto;          /* very important */
   display: block;
   margin: 0 auto;       /* center image */
   margin-bottom: 15px;
