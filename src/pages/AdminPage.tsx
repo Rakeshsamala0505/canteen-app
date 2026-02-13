@@ -398,22 +398,27 @@ if (loadingPage) {
 {/* contact card */}
 
 <div className="canteen-info-card">
+  <div className="note-title">NOTE</div>
   <div className="info-row">
     <span className="icon">⏰</span>
     <span className="label">Canteen Timings:</span>
     <span className="value">12:30 PM – 1:30 PM</span>
   </div>
-
-  <div className="info-row">
-    <span className="icon">📧</span>
-    <span className="label">Issues?</span>
-    <a href="mailto:rakeshsamala0505@gmail.com" className="value">Mail Me</a>
+<div className="info-row">
+    <span className="icon">📅</span>
+    <span className="label">Canteen Closed on:</span>
+    <span className="value">Saturday & Sunday</span>
   </div>
-
+  
   <div className="info-row">
     <span className="icon">📞</span>
     <span className="label">Canteen:</span>
-    <span className="value">+91 9876543210</span>
+    <span className="value">+91 96665 72449</span>
+  </div>
+  <div className="info-row">
+    <span className="icon">📧</span>
+    <span className="label">Any Issues?</span>
+    <a href="mailto:rakeshsamala0505@gmail.com" className="value">Mail Me</a>
   </div>
 </div>
 

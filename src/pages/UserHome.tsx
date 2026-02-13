@@ -7,12 +7,13 @@ import "../styles/userHome.css";
 const UserHome = () => {
   const { user, profile } = useAuthContext();
 // 🔒 Order cutoff time (change later if needed)
-const BIRYANI_CUTOFF_HOUR = 14;
-const BIRYANI_CUTOFF_MINUTE = 4;
+const BIRYANI_CUTOFF_HOUR = 13;
+const BIRYANI_CUTOFF_MINUTE = 9;
 const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
 const [showBiryaniOverPopup, setShowBiryaniOverPopup] = useState(false);
 const [showCancelBlockedPopup, setShowCancelBlockedPopup] = useState(false);
 const [prevBiryaniEnd, setPrevBiryaniEnd] = useState(false);
+const [showWelcomePopup, setShowWelcomePopup] = useState(false);
 
 const todayKey = `biryani_end_seen_${new Date().toISOString().split("T")[0]}`;
 
@@ -32,6 +33,17 @@ const [loadingPage, setLoadingPage] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
+
+ if (user?.id) {
+  const seen = localStorage.getItem(`canteen_welcome_seen_${user.id}`);
+
+  if (!seen) {
+    setShowWelcomePopup(true);
+    localStorage.setItem(`canteen_welcome_seen_${user.id}`, "true");
+  }
+}
+
+  
    const todayObj = new Date();
 todayObj.setMinutes(todayObj.getMinutes() - todayObj.getTimezoneOffset());
 const today = todayObj.toISOString().split("T")[0];
@@ -218,9 +230,9 @@ if (myOrder) {
 
       {canteenOpen && (
         <>
-          <h3 className="welcome-ui">
+          {/* <h3 className="welcome-ui">
   Welcome <span>{profile?.name || "User"}</span>
-</h3>
+</h3> */}
 
 
           {menuToday.length > 0 && (
@@ -354,7 +366,7 @@ if (myOrder) {
   <div className="order-confirm-card">
 
     <div className="order-confirm-info">
-      <h3>✅ Order Confirm</h3>
+      <h3>✅ Order Confirmed</h3>
 
       <p><b>Name:</b> {myOrder.user_name}</p>
       <p><b>Quantity:</b> {myOrder.quantity}</p>
@@ -457,6 +469,7 @@ if (myOrder) {
 
 
 <div className="canteen-info-card">
+  <div className="note-title">NOTE</div>
   <div className="info-row">
     <span className="icon">⏰</span>
     <span className="label">Canteen Timings:</span>
@@ -467,18 +480,38 @@ if (myOrder) {
     <span className="label">Canteen Closed on:</span>
     <span className="value">Saturday & Sunday</span>
   </div>
-  <div className="info-row">
-    <span className="icon">📧</span>
-    <span className="label">Any Issues?</span>
-    <a href="mailto:rakeshsamala0505@gmail.com" className="value">Mail Me</a>
-  </div>
-
+  
   <div className="info-row">
     <span className="icon">📞</span>
     <span className="label">Canteen:</span>
     <span className="value">+91 96665 72449</span>
   </div>
+  <div className="info-row">
+    <span className="icon">📧</span>
+    <span className="label">Any Issues?</span>
+    <a href="mailto:rakeshsamala0505@gmail.com" className="value">Mail Me</a>
+  </div>
 </div>
+
+
+{showWelcomePopup && (
+  <div className="popup-overlay">
+    <div className="popup-card">
+
+      <h2>Welcome to IIMR Canteen 🍽️</h2>
+
+      <p style={{ textAlign: "center", fontSize: 14, lineHeight: 1.6 }}>
+        Here you can check Daily menu Items and reserve
+        your biryani.
+      </p>
+
+      <button onClick={() => setShowWelcomePopup(false)}>
+        OK
+      </button>
+
+    </div>
+  </div>
+)}
 
       {/* FOOTER ALWAYS VISIBLE */}
       <footer
@@ -498,9 +531,11 @@ if (myOrder) {
           zIndex: 100,
         }}
       >
-        <span style={{ color: "#8b7355", fontWeight: 600 }}>
-{profile?.name ?? user?.email ?? "User"}
-        </span>
+       <span style={{ color: "#8b7355" }}>
+  Welcome{" "}
+  <strong>{profile?.name ?? user?.email ?? "User"}</strong>
+</span>
+
 
 
         <button
