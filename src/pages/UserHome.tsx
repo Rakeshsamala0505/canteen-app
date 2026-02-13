@@ -7,8 +7,8 @@ import "../styles/userHome.css";
 const UserHome = () => {
   const { user, profile } = useAuthContext();
 // 🔒 Order cutoff time (change later if needed)
-const BIRYANI_CUTOFF_HOUR = 13;
-const BIRYANI_CUTOFF_MINUTE = 44;
+const BIRYANI_CUTOFF_HOUR = 14;
+const BIRYANI_CUTOFF_MINUTE = 4;
 const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
 const [showBiryaniOverPopup, setShowBiryaniOverPopup] = useState(false);
 const [showCancelBlockedPopup, setShowCancelBlockedPopup] = useState(false);
