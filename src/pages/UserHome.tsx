@@ -357,7 +357,7 @@ if (myOrder) {
   <div className="order-confirm-card">
 
     <div className="order-confirm-info">
-      <h3>✅ Order Confirmed</h3>
+      <h3>✅ Order Confirm</h3>
 
       <p><b>Name:</b> {myOrder.user_name}</p>
       <p><b>Quantity:</b> {myOrder.quantity}</p>
