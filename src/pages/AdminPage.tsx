@@ -430,7 +430,7 @@ if (loadingPage) {
     className="footer-btn refresh-btn"
     onClick={refreshOrders}
   >
-    🔄 Refresh
+    Refresh
   </button>
         <button className="footer-btn save-btn" onClick={handleSave}>Save</button>
         {showSaved && (
