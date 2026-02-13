@@ -117,7 +117,7 @@
   padding: 18px;
   box-shadow: 2px 7px 11px 3px rgb(0 0 0 / 42%);
   text-align: center;
-  min-height: 340px;
+  min-height: 100%;
 }
 
 /* keep real image size — NO cropping */
