@@ -122,7 +122,7 @@ if (existingUser) {
       letterSpacing: "-0.5px",
     },
     subtitle: {
-      fontSize: "11px",
+      fontSize: "17px",
       color: "#7f8c8d",
       fontWeight: "400",
       margin: "0",
@@ -194,7 +194,7 @@ if (existingUser) {
     footer: {
       marginTop: "8px",
       textAlign: "center" as const,
-      fontSize: "11px",
+      fontSize: "15px",
       color: "#7f8c8d",
       marginBottom: "0",
     },
@@ -203,6 +203,7 @@ if (existingUser) {
       textDecoration: "underline",
       fontWeight: "600",
       transition: "color 0.2s ease",
+      fontSize: "17px",
     },
   };
 
