@@ -156,7 +156,7 @@ if (existingUser) {
       gap: "3px",
     },
     label: {
-      fontSize: "11px",
+      fontSize: "14px",
       fontWeight: "600",
       color: "#2c3e50",
       letterSpacing: "0.2px",
