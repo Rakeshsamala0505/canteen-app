@@ -93,7 +93,7 @@ if (existingUser) {
 
   const styles = {
     container: {
-      height: "100%",
+      height: "88%",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
