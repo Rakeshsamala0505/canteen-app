@@ -21,6 +21,10 @@ const Header = () => {
             alt="IIMR Canteen Logo" 
             className="logo-image"
           />
+          <div className="header-title">
+            <div className="title-main">IIMR</div>
+            <div className="title-sub">Canteen</div>
+          </div>
         </div>
         <div className="header-date">
           <div className="date-text">{dateStr}</div>
