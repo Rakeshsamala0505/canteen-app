@@ -35,8 +35,8 @@ const ForgotPassword = () => {
 
   return (
     <div className="container" style={{ 
-      maxWidth: "420px", 
-      marginTop: "2rem",
+      maxWidth: "370px", 
+      marginTop: "7rem",
       background: "#ffffff",
       borderRadius: "16px",
       boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
