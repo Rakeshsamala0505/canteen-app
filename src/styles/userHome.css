@@ -178,8 +178,8 @@ background: #fff;
 
 /* circular biryani image */
 .biryani-img-ui {
-  width: auto;
-  height: 300px;
+  width: 100%;
+  height: auto;
   border-radius: 50%;
   object-fit: cover;
   display: block;

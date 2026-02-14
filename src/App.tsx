@@ -9,20 +9,19 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import UserHome from "./pages/UserHome";
 import AdminPage from "./pages/AdminPage";
 import { AuthProvider, useAuthContext } from "./contexts/AuthContext";
-import  { useState, useEffect } from "react";
-
-
-
-
+import { useState, useEffect } from "react";
 
 const AppInner = () => {
   const { initializing } = useAuthContext();
 
-  // ✅ ADD HERE (inside component)
+  // 📲 Android PWA install
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstall, setShowInstall] = useState(false);
 
-  // ✅ ADD THIS useEffect HERE
+  // 🍎 iOS install hint
+  const [showIOSHint, setShowIOSHint] = useState(false);
+
+  // 🔔 Listen for Android install availability
   useEffect(() => {
     const handler = (e: any) => {
       e.preventDefault();
@@ -31,13 +30,31 @@ const AppInner = () => {
     };
 
     window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", () => setShowInstall(false));
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handler);
     };
   }, []);
 
-  // ✅ ADD install handler here
+  // ✅ Hide button if already installed
+  useEffect(() => {
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      setShowInstall(false);
+    }
+  }, []);
+
+  // 📱 Detect iOS Safari
+  useEffect(() => {
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isInStandalone = (window.navigator as any).standalone;
+
+    if (isIOS && !isInStandalone) {
+      setShowIOSHint(true);
+    }
+  }, []);
+
+  // 🚀 Trigger Android install
   const handleInstall = async () => {
     if (!deferredPrompt) return;
 
@@ -66,13 +83,34 @@ const AppInner = () => {
     <>
       <Header />
 
-      {/* ✅ INSTALL BUTTON */}
+      {/* 🍎 iOS install message */}
+      {showIOSHint && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 20,
+            left: 20,
+            right: 20,
+            background: "#000",
+            color: "#fff",
+            padding: "10px 14px",
+            borderRadius: 12,
+            textAlign: "center",
+            fontSize: 14,
+            zIndex: 9999,
+          }}
+        >
+          Tap <b>Share</b> → <b>Add to Home Screen</b> to install the app 📲
+        </div>
+      )}
+
+      {/* 🤖 Android install button */}
       {showInstall && (
         <button
           onClick={handleInstall}
           style={{
             position: "fixed",
-            bottom: 20,
+            bottom: 80,
             right: 20,
             padding: "10px 16px",
             borderRadius: 10,
@@ -113,7 +151,6 @@ const AppInner = () => {
     </>
   );
 };
-
 
 function App() {
   return (
