@@ -9,9 +9,47 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import UserHome from "./pages/UserHome";
 import AdminPage from "./pages/AdminPage";
 import { AuthProvider, useAuthContext } from "./contexts/AuthContext";
+import  { useState, useEffect } from "react";
+
+
+
+
 
 const AppInner = () => {
   const { initializing } = useAuthContext();
+
+  // ✅ ADD HERE (inside component)
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstall, setShowInstall] = useState(false);
+
+  // ✅ ADD THIS useEffect HERE
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstall(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handler);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+    };
+  }, []);
+
+  // ✅ ADD install handler here
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === "accepted") {
+      setShowInstall(false);
+    }
+
+    setDeferredPrompt(null);
+  };
 
   if (initializing) {
     return (
@@ -27,6 +65,28 @@ const AppInner = () => {
   return (
     <>
       <Header />
+
+      {/* ✅ INSTALL BUTTON */}
+      {showInstall && (
+        <button
+          onClick={handleInstall}
+          style={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            padding: "10px 16px",
+            borderRadius: 10,
+            background: "#28a745",
+            color: "#fff",
+            border: "none",
+            fontWeight: 700,
+            zIndex: 9999,
+          }}
+        >
+          Install App
+        </button>
+      )}
+
       <Routes>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
@@ -53,6 +113,7 @@ const AppInner = () => {
     </>
   );
 };
+
 
 function App() {
   return (
