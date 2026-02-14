@@ -54,9 +54,14 @@ setBiryaniEnd(false);
     };
     fetchAdminState();
   }, []);
-  useEffect(() => {
-  setLiveOrders(orders || []);
-}, [orders]);
+ useEffect(() => {
+  if (!orders) return;
+
+  setLiveOrders(
+    orders.filter(o => o.date === menuDate)
+  );
+}, [orders, menuDate]);
+
 
 
   // Toggle canteen open/close
