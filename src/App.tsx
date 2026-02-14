@@ -110,8 +110,8 @@ const AppInner = () => {
           onClick={handleInstall}
           style={{
             position: "fixed",
-            bottom: 80,
-            right: 20,
+            bottom: 10,
+            right: 150,
             padding: "10px 16px",
             borderRadius: 10,
             background: "#28a745",
