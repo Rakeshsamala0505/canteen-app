@@ -377,7 +377,7 @@ if (myOrder) {
   <div className="order-confirm-card">
 
     <div className="order-confirm-info">
-      <h3>✅ Order Confirmed</h3>
+      <h3>Order Status :</h3>
 
       <p><b>Name:</b> {myOrder.user_name}</p>
       <p><b>Quantity:</b> {myOrder.quantity}</p>
@@ -388,17 +388,17 @@ if (myOrder) {
       </p>
 
       <p>
-  <b>Date:</b>{" "}
-  {new Date(myOrder.date).toLocaleDateString("en-GB")}
-</p>
+      <b>Date:</b>{" "}
+      {new Date(myOrder.date).toLocaleDateString("en-GB")}
+       </p>
 
     </div>
 
-  <img
-  src={myOrder.completed ? "/completed.png" : "/confirmed.png"}
-  alt="Order status"
-  className="order-confirm-img"
-/>
+      <img
+      src={myOrder.completed ? "/completed.png" : "/confirmed.png"}
+      alt="Order status"
+      className="order-confirm-img"
+      />
 
 
   </div>

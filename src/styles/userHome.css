@@ -187,28 +187,27 @@ background: #fff;
   box-shadow: 0 6px 16px rgba(0,0,0,0.18);
 }
 
-/* order confimation card */
-
 .order-confirm-card {
   display: flex;
-  align-items: center;
   background: #eafff1;
-  padding: 16px;
+  padding: 12px;
   border-radius: 16px;
   margin-bottom: 18px;
   margin-top: 1rem;
   box-shadow: 0 4px 12px rgba(0,0,0,.12);
+
+  gap: 12px; /* small clean gap */
 }
 
-/* THIS controls the gap only */
-.order-confirm-card {
-  gap: 6px;   /* was looking big before — smaller = closer */
+/* LEFT SIDE — details */
+.order-confirm-info {
+  flex: 3;          /* takes 50% */
 }
 
-/* push image slightly left but still right side */
+/* RIGHT SIDE — image box */
 .order-confirm-img {
-  margin-left: 4rem;   /* keeps it right */
-  width: auto;
+  flex: 1;     /* smaller portion */
+  max-width: 100%;
   height: 140px;
   object-fit: contain;
 }
