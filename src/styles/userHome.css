@@ -91,44 +91,58 @@
 
 
 /* footer title strip */
-.menu-title-footer-ui {
-  background: #ffc107;
-  padding: 12px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 800;
-  color: #3d2b1f;
-  letter-spacing: 0.4px;
-  border-radius: 22px;
-}
-
-
-/* container spacing */
-.menu-list-ui {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;   /* space between cards */
-}
-
-/* each menu card */
+/* card container */
 .menu-card-ui {
   background: #ffffff;
   border-radius: 22px;
-  padding: 18px;
+  overflow: hidden; /* important to clip corners */
   box-shadow: 2px 7px 11px 3px rgb(0 0 0 / 42%);
-  text-align: center;
-  min-height: 100%;
+  height: 300px;   /* adjust if you want taller cards */
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
 }
 
-/* keep real image size — NO cropping */
+/* image takes 80% */
 .menu-img-ui {
-  width: auto;
-  height: auto;          /* very important */
-  display: block;
-  margin: 0 auto;       /* center image */
-  margin-bottom: 15px;
-  margin-top: 15px;
+  width: 100%;
+  height: 80%;
+object-fit: contain;
+background: #fff;
 }
+.menu-card-ui {
+  transition: transform 0.2s ease;
+}
+
+.menu-card-ui:hover {
+  transform: scale(1.02);
+}
+
+
+/* footer takes 20% */
+.menu-title-footer-ui {
+  height: 20%;
+  background: #ffc107;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+
+  font-size: 17px;
+  font-weight: 800;
+  color: #3d2b1f;
+  letter-spacing: 0.4px;
+}
+
+/* price pill */
+.menu-price-ui {
+  background: #ff8a00;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
 
 
 

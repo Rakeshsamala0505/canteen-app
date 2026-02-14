@@ -3,6 +3,12 @@ import { useAuthContext } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
 import "../styles/userHome.css";
 
+const MENU_PRICES: Record<string, number> = {
+  "Veg Meals": 80,
+  "Biryani": 120,
+  "Fried Rice": 90,
+  "Noodles": 85,
+};
 
 const UserHome = () => {
   const { user, profile } = useAuthContext();
@@ -278,9 +284,13 @@ if (myOrder) {
     className="menu-img-ui"
   />
 
-  <div className="menu-title-footer-ui">
-    {item}
-  </div>
+ <div className="menu-title-footer-ui">
+  <span>{item}</span>
+  <span className="menu-price-ui">
+    ₹{MENU_PRICES[item] ?? "--"}
+  </span>
+</div>
+
 </div>
 
   ))}
