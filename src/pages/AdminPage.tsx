@@ -148,9 +148,17 @@ const refreshOrders = async () => {
   setLiveOrders(data || []);
 };
 
-const totalQuantity = liveOrders
-  .filter(o => o.menu === "Biryani")
-  .reduce((sum, o) => sum + Number(o.quantity || 0), 0);
+// ✅ Get only Biryani orders once
+const biryaniOrders = liveOrders.filter(
+  o => o.menu === "Biryani"
+);
+
+// ✅ Calculate total only from biryaniOrders
+const totalQuantity = biryaniOrders.reduce(
+  (sum, o) => sum + Number(o.quantity || 0),
+  0
+);
+
 
 if (loadingPage) {
   return (
@@ -167,7 +175,11 @@ if (loadingPage) {
   );
 }
 
+
+
   return (
+
+    
 <div style={{ maxWidth: 480, margin: "0 auto", padding: "16px 16px 90px" }}>
       {/* ...existing code... */}
 
@@ -351,47 +363,60 @@ if (loadingPage) {
   </thead>
 
   <tbody>
-    {liveOrders
-      .filter(o => o.menu === "Biryani")
-      .map((order, idx) => (
-        <tr
-          key={order.id}
-          className={`order-row ${order.completed ? "completed" : ""}`}
+
+  {/* ✅ Show message when no orders */}
+  {biryaniOrders.length === 0 && (
+    <tr>
+      <td colSpan={6} style={{ textAlign: "center", padding: 12 }}>
+        No orders yet
+      </td>
+    </tr>
+  )}
+
+  {/* ✅ Show orders when they exist */}
+  {biryaniOrders.map((order, idx) => (
+    <tr
+      key={order.id}
+      className={`order-row ${order.completed ? "completed" : ""}`}
+    >
+      <td className="col-serial">{idx + 1}</td>
+      <td className="col-name">{order.user_name}</td>
+      <td className="col-qty">{order.quantity}</td>
+      <td className="col-phone">{order.user_phone}</td>
+      <td className="col-status">
+        {order.completed ? "Completed" : "Pending"}
+      </td>
+      <td className="col-action">
+        <button
+          className={`order-btn ${
+            order.completed ? "unselect" : "complete"
+          }`}
+          onClick={() =>
+            order.completed
+              ? unselectOrder(order.id)
+              : markCompleted(order.id)
+          }
         >
-          <td className="col-serial">{idx + 1}</td>
-          <td className="col-name">{order.user_name}</td>
-          <td className="col-qty">{order.quantity}</td>
-          <td className="col-phone">{order.user_phone}</td>
-          <td className="col-status">
-            {order.completed ? "Completed" : "Pending"}
-          </td>
+          {order.completed ? "Unselect" : "Complete"}
+        </button>
+      </td>
+    </tr>
+  ))}
 
-          <td className="col-action">
-            <button
-              className={`order-btn ${
-                order.completed ? "unselect" : "complete"
-              }`}
-              onClick={() =>
-                order.completed
-                  ? unselectOrder(order.id)
-                  : markCompleted(order.id)
-              }
-            >
-              {order.completed ? "Unselect" : "Complete"}
-            </button>
-          </td>
-        </tr>
-      ))}
-      <tr style={{ background: "#f1efe9", fontWeight: 700 }}>
-  <td className="col-serial"></td>
-  <td className="col-name">TOTAL</td>
-  <td className="col-qty">{totalQuantity}</td>
-  <td className="col-phone"></td>
-  <td className="col-status"></td>
-  <td className="col-action"></td>
-</tr>
+  {/* ✅ TOTAL only when orders exist */}
+  {biryaniOrders.length > 0 && (
+    <tr style={{ background: "#f1efe9", fontWeight: 700 }}>
+      <td></td>
+      <td>TOTAL</td>
+      <td>{totalQuantity}</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  )}
 
-  </tbody>
+</tbody>
+
 </table>
 
   </section>
