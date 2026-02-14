@@ -97,7 +97,7 @@ if (existingUser) {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+      background: "linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%)",
       padding: "16px",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
       overflow: "hidden",
