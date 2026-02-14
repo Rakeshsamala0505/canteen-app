@@ -79,12 +79,12 @@ const Login = () => {
 
   return (
     <div className="container" style={{ 
-      maxWidth: "420px", 
-      marginTop: "2rem",
+      maxWidth: "370px", 
+      marginTop: "5rem",
       background: "#ffffff",
       borderRadius: "16px",
       boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-      padding: "32px",
+      padding: "20px",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
     }}>
       <h1 style={{

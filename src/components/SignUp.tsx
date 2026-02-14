@@ -225,7 +225,7 @@ if (existingUser) {
 
         <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.formGroup}>
-            <label htmlFor="name" style={styles.label}>Full Name</label>
+            <label htmlFor="name" style={styles.label}>Name</label>
             <input
               id="name"
               type="text"
