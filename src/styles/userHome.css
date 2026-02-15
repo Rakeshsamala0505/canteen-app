@@ -128,10 +128,11 @@ background: #fff;
   justify-content: space-between;
   padding: 0 14px;
 
-  font-size: 17px;
+  font-size: 25px;
   font-weight: 800;
   color: #3d2b1f;
   letter-spacing: 0.4px;
+  font-family: cursive;
 }
 
 /* price pill */
@@ -140,7 +141,7 @@ background: #fff;
   color: white;
   padding: 4px 10px;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: 20px;
 }
 
 
