@@ -93,16 +93,14 @@ if (existingUser) {
 
   const styles = {
     container: {
-      height: "88%",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      background: "linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%)",
-      padding: "16px",
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
-      overflow: "hidden",
-      marginTop: "3rem",
-    },
+  minHeight: "88vh",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%)",
+  padding: "16px",
+  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
+},
     card: {
       background: "#ffffff",
       borderRadius: "14px",

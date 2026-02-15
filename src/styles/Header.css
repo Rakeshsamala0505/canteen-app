@@ -4,9 +4,11 @@
   color: #fff;
   padding: 16px 0;
   width: 100%;
-  min-width: 0;
+  max-width: 480px;      /* ✅ lock to mobile width */
+  margin: 0 auto;       /* ✅ center on desktop */
   box-shadow: 0 4px 20px rgba(139, 115, 85, 0.3);
 }
+
 
 /* Container */
 .header-container {
