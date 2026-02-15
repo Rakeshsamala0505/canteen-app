@@ -4,10 +4,14 @@ import { supabase } from "../lib/supabase";
 import "../styles/userHome.css";
 
 const MENU_PRICES: Record<string, number> = {
-  "Veg Meals": 80,
-  "Biryani": 120,
-  "Fried Rice": 90,
-  "Noodles": 85,
+  "Roti": 10,
+  "Raita": 10,
+  "Dal": 10,
+  "Sambar": 10,
+  "Rice": 10,
+  "potato": 10,
+  "Chana": 10,
+  "Egg": 10,
 };
 
 const UserHome = () => {

@@ -20,7 +20,7 @@ const [biryaniEnd, setBiryaniEnd] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
   const menuOptions = settings?.menu_options && settings.menu_options.length > 0
     ? settings.menu_options
-    : ["Veg Meals", "Biryani", "Fried Rice", "Noodles"];
+    : ["Roti", "Raita", "Dal", "Sambar", "potato", "Chana", "Egg", "Rice"];
   // const menuImages = settings?.menu_images || {};
 
   // Fetch admin state for today
