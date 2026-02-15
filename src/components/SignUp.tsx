@@ -101,6 +101,7 @@ if (existingUser) {
       padding: "16px",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
       overflow: "hidden",
+      marginTop: "3rem",
     },
     card: {
       background: "#ffffff",
