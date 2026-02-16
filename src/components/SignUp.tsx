@@ -3,6 +3,8 @@ import type { SignUpData } from "../services/authService";
 import { supabase } from "../lib/supabase";
 
 const SignUp = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState<SignUpData>({
     email: "",
     password: "",
@@ -268,20 +270,39 @@ if (existingUser) {
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="password" style={styles.label}>Password</label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              style={styles.input}
-              onFocus={(e) => e.target.style.cssText = `${e.target.style.cssText}; border-color: #c9a86a; box-shadow: 0 0 0 3px rgba(201, 168, 106, 0.1);`}
-              onBlur={(e) => e.target.style.cssText = `${e.target.style.cssText}; border-color: #e1e8ed; box-shadow: none;`}
-            />
-          </div>
+          <div style={{ ...styles.formGroup, position: "relative" }}>
+  <label htmlFor="password" style={styles.label}>Password</label>
+
+  <input
+    id="password"
+    type={showPassword ? "text" : "password"}
+    name="password"
+    value={formData.password}
+    onChange={handleChange}
+    required
+    style={{
+      ...styles.input,
+      paddingRight: "36px"
+    }}
+    onFocus={(e) => e.target.style.cssText = `${e.target.style.cssText}; border-color: #c9a86a; box-shadow: 0 0 0 3px rgba(201, 168, 106, 0.1);`}
+    onBlur={(e) => e.target.style.cssText = `${e.target.style.cssText}; border-color: #e1e8ed; box-shadow: none;`}
+  />
+
+  <span
+    onClick={() => setShowPassword(!showPassword)}
+    style={{
+      position: "absolute",
+      right: "10px",
+      top: "32px",
+      cursor: "pointer",
+      fontSize: "16px",
+      userSelect: "none"
+    }}
+  >
+    {showPassword ? "🙈" : "👁️"}
+  </span>
+</div>
+
 
           <button 
             type="submit" 
