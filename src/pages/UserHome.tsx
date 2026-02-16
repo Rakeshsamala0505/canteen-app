@@ -232,6 +232,9 @@ if (myOrder) {
             color: "#dc3545",
             background: "#fff0f0",
             borderRadius: 12,
+            boxShadow: "0 0 12px rgba(220,53,69,3)",
+border: "2px solid #dc3545",
+animation: "glow 1.5s infinite alternate",
           }}
         >
           Canteen Closed Today🚫
@@ -492,7 +495,7 @@ if (myOrder) {
   </div>
 <div className="info-row">
     <span className="icon">📅</span>
-    <span className="label">Canteen Closed on:</span>
+    <span className="label">Canteen Holiday:</span>
     <span className="value">Saturday & Sunday</span>
   </div>
   
@@ -505,6 +508,10 @@ if (myOrder) {
     <span className="icon">📧</span>
     <span className="label">Any Issues?</span>
     <a href="mailto:rakeshsamala0505@gmail.com" className="value">Mail Me</a>
+  </div>
+  <div className="info-row">
+    <span className="icon">⚠️</span>
+    <span className="value">Canteen will Open by 12:30 PM</span>
   </div>
 </div>
 

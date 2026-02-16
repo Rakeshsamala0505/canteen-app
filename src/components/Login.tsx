@@ -5,10 +5,13 @@ import type { SignInData } from "../services/authService";
 import { supabase } from "../lib/supabase";
 
 // Fixed admin credentials
-const ADMIN_EMAIL = "adminop@iimr.com";
-const ADMIN_PASSWORD = "admin19";
+const ADMIN_EMAIL = "canteen@iimr.com";
+const ADMIN_PASSWORD = "admin05";
+
 
 const Login = () => {
+    const [showPassword, setShowPassword] = useState(false); // ✅ HERE
+
   const [formData, setFormData] = useState<SignInData>({
     email: "",
     password: "",
@@ -171,43 +174,59 @@ const Login = () => {
           />
         </div>
 
-        <div className="form-group" style={{ marginBottom: "20px" }}>
-          <label style={{
-            fontSize: "14px",
-            fontWeight: "600",
-            color: "#2c3e50",
-            marginBottom: "6px",
-            display: "block",
-            letterSpacing: "0.2px"
-          }}>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            style={{
-              width: "100%",
-              padding: "11px 14px",
-              fontSize: "15px",
-              border: "2px solid #e1e8ed",
-              borderRadius: "10px",
-              outline: "none",
-              transition: "all 0.2s ease",
-              fontFamily: "inherit",
-              color: "#2c3e50",
-              boxSizing: "border-box"
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = "#c9a86a";
-              e.target.style.boxShadow = "0 0 0 3px rgba(201, 168, 106, 0.1)";
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = "#e1e8ed";
-              e.target.style.boxShadow = "none";
-            }}
-          />
-        </div>
+       <div className="form-group" style={{ marginBottom: "20px", position: "relative" }}>
+  <label style={{
+    fontSize: "14px",
+    fontWeight: "600",
+    color: "#2c3e50",
+    marginBottom: "6px",
+    display: "block",
+    letterSpacing: "0.2px"
+  }}>Password</label>
+
+  <input
+    type={showPassword ? "text" : "password"}
+    name="password"
+    value={formData.password}
+    onChange={handleChange}
+    required
+    style={{
+      width: "100%",
+      padding: "11px 40px 11px 14px", // space for eye icon
+      fontSize: "15px",
+      border: "2px solid #e1e8ed",
+      borderRadius: "10px",
+      outline: "none",
+      transition: "all 0.2s ease",
+      fontFamily: "inherit",
+      color: "#2c3e50",
+      boxSizing: "border-box"
+    }}
+    onFocus={(e) => {
+      e.target.style.borderColor = "#c9a86a";
+      e.target.style.boxShadow = "0 0 0 3px rgba(201, 168, 106, 0.1)";
+    }}
+    onBlur={(e) => {
+      e.target.style.borderColor = "#e1e8ed";
+      e.target.style.boxShadow = "none";
+    }}
+  />
+
+  <span
+    onClick={() => setShowPassword(!showPassword)}
+    style={{
+      position: "absolute",
+      right: "12px",
+      top: "38px",
+      cursor: "pointer",
+      fontSize: "18px",
+      userSelect: "none"
+    }}
+  >
+    {showPassword ? "🙈" : "👁️"}
+  </span>
+</div>
+
 
         <button 
           type="submit" 
