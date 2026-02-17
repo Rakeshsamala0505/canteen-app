@@ -17,7 +17,7 @@ const MENU_PRICES: Record<string, number> = {
 const UserHome = () => {
   const { user, profile } = useAuthContext();
 // 🔒 Order cutoff time (change later if needed)
-const BIRYANI_CUTOFF_HOUR = 23;
+const BIRYANI_CUTOFF_HOUR = 10;
 const BIRYANI_CUTOFF_MINUTE = 0;
 const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
 const [showBiryaniOverPopup, setShowBiryaniOverPopup] = useState(false);
