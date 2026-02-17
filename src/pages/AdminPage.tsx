@@ -25,6 +25,55 @@ const [biryaniEnd, setBiryaniEnd] = useState(false);
 
   // Fetch admin state for today
   useEffect(() => {
+
+    useEffect(() => {
+  const closeAtMidnight = async () => {
+    const now = new Date();
+
+    if (now.getHours() === 23 && now.getMinutes() === 59) {
+
+      const today = new Date().toISOString().split("T")[0];
+
+      await supabase
+        .from("admin_state")
+        .upsert([{
+          date: today,
+          canteen_open: false,
+          biryani_active: true,
+          biryani_end: false
+        }], { onConflict: "date" });
+
+    }
+  };
+
+  const timer = setInterval(closeAtMidnight, 60000);
+  return () => clearInterval(timer);
+}, []);
+useEffect(() => {
+  const resetAfterDay = async () => {
+    const now = new Date();
+
+    if (now.getHours() === 0 && now.getMinutes() === 1) {
+
+      const today = new Date().toISOString().split("T")[0];
+
+      await supabase
+        .from("admin_state")
+        .upsert([{
+          date: today,
+          canteen_open: false,
+          menu_items: [],
+          biryani_active: false,
+          biryani_end: false
+        }], { onConflict: "date" });
+
+    }
+  };
+
+  const timer = setInterval(resetAfterDay, 60000);
+  return () => clearInterval(timer);
+}, []);
+
 const today = new Date().toLocaleDateString("en-CA");
     setMenuDate(today);
     const fetchAdminState = async () => {

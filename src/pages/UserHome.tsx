@@ -17,8 +17,8 @@ const MENU_PRICES: Record<string, number> = {
 const UserHome = () => {
   const { user, profile } = useAuthContext();
 // 🔒 Order cutoff time (change later if needed)
-const BIRYANI_CUTOFF_HOUR = 10;
-const BIRYANI_CUTOFF_MINUTE = 0;
+const BIRYANI_CUTOFF_HOUR = 23;
+const BIRYANI_CUTOFF_MINUTE = 59;
 const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
 const [showBiryaniOverPopup, setShowBiryaniOverPopup] = useState(false);
 const [showCancelBlockedPopup, setShowCancelBlockedPopup] = useState(false);
@@ -491,7 +491,7 @@ animation: "glow 1.5s infinite alternate",
   <div className="info-row">
     <span className="icon">⏰</span>
     <span className="label">Canteen Timings:</span>
-    <span className="value">12:30 PM – 1:30 PM</span>
+    <span className="value">12:30 PM – 2:00PM</span>
   </div>
 <div className="info-row">
     <span className="icon">📅</span>
