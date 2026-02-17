@@ -369,7 +369,7 @@ animation: "glow 1.5s infinite alternate",
               fontWeight: 600,
             }}
           >
-            Order by 10:00 AM only!!
+            Order by 10:01 AM only!!
           </div>
         )}
 
