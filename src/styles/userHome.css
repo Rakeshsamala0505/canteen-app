@@ -137,10 +137,10 @@ background: #fff;
 
 /* price pill */
 .menu-price-ui {
-  background: #ff8a00;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 12px;
+  background: #ffffff;
+  color: rgb(0, 0, 0);
+  padding: 5px 40px;
+  border-radius: 40px;
   font-size: 18px;
 }
 
