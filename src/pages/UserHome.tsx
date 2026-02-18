@@ -6,11 +6,11 @@ import "../styles/userHome.css";
 const MENU_PRICES: Record<string, number> = {
   Roti: 10,
   Raita: 10,
-  Dal: 10,
-  Sambar: 10,
-  Rice: 10,
-  potato: 10,
-  Chana: 10,
+  Dal: 20,
+  Sambar: 20,
+  Rice: 20,
+  potato: 20,
+  Chana: 20,
   Egg: 10,
 };
 
