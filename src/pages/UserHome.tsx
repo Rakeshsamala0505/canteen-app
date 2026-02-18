@@ -154,7 +154,7 @@ const UserHome = () => {
       await supabase.from("orders").delete().eq("id", myOrder.id);
       setMyOrder(null);
       setSuccess("Order cancelled");
-      setTimeout(() => setSuccess(""), 4000);
+      setTimeout(() => setSuccess(""), 3000);
       return;
     }
 
@@ -228,7 +228,12 @@ const UserHome = () => {
                 textAlign: "center",
               }}
             >
-              Food is being prepared 👨‍🍳
+              <img
+                src="/cooking.gif"
+                alt="Cooking..."
+                style={{ width: 160, height: 160, objectFit: "contain", marginBottom: 12 }}
+              />
+              <div>Food is being prepared 👨‍🍳</div>
             </div>
           ) : (
             <div className="menu-list-ui">
@@ -372,10 +377,21 @@ const UserHome = () => {
           )}
 
           {myOrder && (
-            <div className="order-confirm-card">
-              <p><b>Name:</b> {myOrder.user_name}</p>
-              <p><b>Quantity:</b> {myOrder.quantity}</p>
-              <p><b>Status:</b> {myOrder.completed ? "Completed ✅" : "Pending 🕒"}</p>
+            <div className="order-confirm-card" style={{ alignItems: "center" }}>
+              {/* Left: details */}
+              <div className="order-confirm-info">
+                <p><b>Name:</b> {myOrder.user_name}</p>
+                <p><b>Quantity:</b> {myOrder.quantity}</p>
+                <p><b>Status:</b> {myOrder.completed ? "Completed ✅" : "Pending 🕒"}</p>
+              </div>
+
+              {/* Right: confirmed.png when ordered, completed.png when completed */}
+              <img
+                src={myOrder.completed ? "/completed.png" : "/confirmed.png"}
+                alt="order status"
+                className="order-confirm-img"
+                style={{ transition: "opacity 0.4s ease" }}
+              />
             </div>
           )}
         </>
