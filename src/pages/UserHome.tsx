@@ -1,106 +1,85 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
 import "../styles/userHome.css";
 
 const MENU_PRICES: Record<string, number> = {
-  "Roti": 10,
-  "Raita": 10,
-  "Dal": 10,
-  "Sambar": 10,
-  "Rice": 10,
-  "potato": 10,
-  "Chana": 10,
-  "Egg": 10,
+  Roti: 10,
+  Raita: 10,
+  Dal: 10,
+  Sambar: 10,
+  Rice: 10,
+  potato: 10,
+  Chana: 10,
+  Egg: 10,
 };
 
 const UserHome = () => {
   const { user, profile } = useAuthContext();
-// 🔒 Order cutoff time (change later if needed)
-const BIRYANI_CUTOFF_HOUR = 23;
-const BIRYANI_CUTOFF_MINUTE = 59;
-const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
-const [showBiryaniOverPopup, setShowBiryaniOverPopup] = useState(false);
-const [showCancelBlockedPopup, setShowCancelBlockedPopup] = useState(false);
-const [prevBiryaniEnd, setPrevBiryaniEnd] = useState(false);
-const [showWelcomePopup, setShowWelcomePopup] = useState(false);
-
-const todayKey = `biryani_end_seen_${new Date().toISOString().split("T")[0]}`;
-
-const [closingPopup, setClosingPopup] = useState(false);
-
-
 
   const [menuToday, setMenuToday] = useState<string[]>([]);
   const [menuImages, setMenuImages] = useState<Record<string, string>>({});
+
+  const [canteenOpen, setCanteenOpen] = useState<boolean>(false);
   const [biryaniAvailable, setBiryaniAvailable] = useState(false);
-const [canteenOpen, setCanteenOpen] = useState<boolean | null>(null);
-const [loadingPage, setLoadingPage] = useState(true);
+  const [biryaniEnded, setBiryaniEnded] = useState(false);
+  const [biryaniClosed, setBiryaniClosed] = useState(false); // ✅ NEW
+
+  const [loadingPage, setLoadingPage] = useState(true);
   const [myOrder, setMyOrder] = useState<any>(null);
 
   const [quantity, setQuantity] = useState(1);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
+  const [showBiryaniOverPopup, setShowBiryaniOverPopup] = useState(false);
+  const [showBiryaniClosedPopup, setShowBiryaniClosedPopup] = useState(false);
+  const [showBiryaniEndPopup, setShowBiryaniEndPopup] = useState(false); // ✅ NEW
+
   useEffect(() => {
+    if (user?.id) {
+      const seen = localStorage.getItem(`canteen_welcome_seen_${user.id}`);
+      if (!seen) {
+        setShowWelcomePopup(true);
+        localStorage.setItem(`canteen_welcome_seen_${user.id}`, "true");
+      }
+    }
 
- if (user?.id) {
-  const seen = localStorage.getItem(`canteen_welcome_seen_${user.id}`);
-
-  if (!seen) {
-    setShowWelcomePopup(true);
-    localStorage.setItem(`canteen_welcome_seen_${user.id}`, "true");
-  }
-}
-
-  
-   const todayObj = new Date();
-todayObj.setMinutes(todayObj.getMinutes() - todayObj.getTimezoneOffset());
-const today = todayObj.toISOString().split("T")[0];
-
+    const todayObj = new Date();
+    todayObj.setMinutes(todayObj.getMinutes() - todayObj.getTimezoneOffset());
+    const today = todayObj.toISOString().split("T")[0];
 
     const loadAll = async () => {
-      // ADMIN STATE
       const { data: state } = await supabase
         .from("admin_state")
-.select("canteen_open, menu_items, biryani_active, biryani_end")
+        .select("canteen_open, menu_items, biryani_active, biryani_end, biryani_closed")
         .eq("date", today)
         .maybeSingle();
 
       if (state) {
         setMenuToday(state.menu_items || []);
-        setBiryaniAvailable(!!state.biryani_active);
         setCanteenOpen(!!state.canteen_open);
+        setBiryaniAvailable(!!state.biryani_active);
+        setBiryaniEnded(!!state.biryani_end);
+        setBiryaniClosed(!!state.biryani_closed); // ✅ NEW
       } else {
-        setCanteenOpen(false);
         setMenuToday([]);
+        setCanteenOpen(false);
         setBiryaniAvailable(false);
+        setBiryaniEnded(false);
+        setBiryaniClosed(false); // ✅ NEW
       }
 
-      // USER ORDER
       const { data: orders } = await supabase
-  .from("orders")
-  .select("*")
-  .eq("user_id", user!.id)
-  .eq("date", today)   // 👈 THIS LINE FIXES EVERYTHING
-  .limit(1);
+        .from("orders")
+        .select("*")
+        .eq("user_id", user!.id)
+        .eq("date", today)
+        .limit(1);
 
+      setMyOrder(orders?.[0] || null);
 
-setMyOrder(orders?.[0] || null);
-
-if (
-  orders?.[0]?.menu === "Biryani" &&
-  state?.biryani_end === true &&
-  prevBiryaniEnd === false
-) {
-  setShowBiryaniOverPopup(true);
-}
-setPrevBiryaniEnd(!!state?.biryani_end);
-
-
-
-
-      // MENU IMAGES
       const { data: settings } = await supabase
         .from("settings")
         .select("menu_images")
@@ -110,107 +89,101 @@ setPrevBiryaniEnd(!!state?.biryani_end);
       if (settings?.menu_images) {
         setMenuImages(settings.menu_images);
       }
+
       setLoadingPage(false);
-
     };
-    Object.keys(localStorage).forEach(key => {
-  if (key.startsWith("biryani_end_seen_") && key !== todayKey) {
-    localStorage.removeItem(key);
-  }
-});
-
 
     loadAll();
+    const interval = setInterval(loadAll, 3000);
+    return () => clearInterval(interval);
+  }, [user?.id]);
 
-const interval = setInterval(() => {
-  loadAll();
-}, 3000); // refresh every 4 seconds
+  // ✅ Show popup only once, only for users with a pending (not completed) order
+  useEffect(() => {
+    if (!biryaniEnded) return;
+    if (!myOrder || myOrder.completed) return; // only pending order users
 
-return () => clearInterval(interval);
+    const today = new Date().toLocaleDateString("en-CA");
+    const seenKey = `biryani_end_popup_seen_${user?.id}_${today}`;
+    const alreadySeen = localStorage.getItem(seenKey);
+    if (alreadySeen) return; // already shown once today
 
-  }, 
-  [user?.id]);
+    setShowBiryaniEndPopup(true);
+    localStorage.setItem(seenKey, "true");
+  }, [biryaniEnded, myOrder]);
 
-const isAfterCutoff = () => {
-  const now = new Date();
+  const orderBiryani = async () => {
+    setError("");
+    setSuccess("");
 
-  const cutoff = new Date();
-  cutoff.setHours(BIRYANI_CUTOFF_HOUR, BIRYANI_CUTOFF_MINUTE, 0, 0);
+    // ✅ CASE 1: Orders closed + user has an existing order → block cancel
+    if (biryaniClosed && myOrder) {
+      setError("Order cannot be cancelled once orders are closed.");
+      setTimeout(() => setError(""), 3000);
+      return;
+    }
 
-  return now >= cutoff;
-};
+    // ✅ CASE 2: Orders closed + user has NO order → show "closed" popup (auto-hide after 3s)
+    if (biryaniClosed && !myOrder) {
+      setShowBiryaniClosedPopup(true);
+      setTimeout(() => setShowBiryaniClosedPopup(false), 3000);
+      return;
+    }
 
- const orderBiryani = async () => {
-  setError("");
-  setSuccess("");
+    if (!biryaniAvailable || biryaniEnded) {
+      setShowBiryaniOverPopup(true);
+      return;
+    }
 
+    const todayObj = new Date();
+    todayObj.setMinutes(todayObj.getMinutes() - todayObj.getTimezoneOffset());
+    const today = todayObj.toISOString().split("T")[0];
 
-  // ⏰ cutoff popup logic
-if (!myOrder && isAfterCutoff()) {
-    setShowTimeoutPopup(true);
-    return;
-  }
+    const { data: userProfile } = await supabase
+      .from("users")
+      .select("name, phone")
+      .eq("id", user!.id)
+      .single();
 
+    if (!userProfile) {
+      setError("User profile not found");
+      return;
+    }
 
-   const todayObj = new Date();
-todayObj.setMinutes(todayObj.getMinutes() - todayObj.getTimezoneOffset());
-const today = todayObj.toISOString().split("T")[0];
+    if (myOrder) {
+      await supabase.from("orders").delete().eq("id", myOrder.id);
+      setMyOrder(null);
+      setSuccess("Order cancelled");
+      setTimeout(() => setSuccess(""), 4000);
+      return;
+    }
 
-    // ✅ ADD THIS BLOCK RIGHT HERE (NEW)
-  const { data: userProfile, error: profileError } = await supabase
-    .from("users")
-    .select("name, phone")
-    .eq("id", user!.id)
-    .single();
-
-  if (profileError || !userProfile) {
-    setError("User profile not found");
-    return;
-  }
-
-  // ❌ BLOCK CANCEL AFTER CUTOFF
-// CANCEL ORDER
-if (myOrder) {
-
-  // ❌ If after cutoff → block cancel
-  if (isAfterCutoff()) {
-    setShowCancelBlockedPopup(true);
-    return;
-  }
-
-  // ✅ If before cutoff → allow cancel
-  await supabase.from("orders").delete().eq("id", myOrder.id);
-  setMyOrder(null);
-  setSuccess("Order cancelled");
-  return;
-}
-
-
-    // PLACE ORDER
     const { data, error } = await supabase
-  .from("orders")
-  .insert([
-    {
-      user_id: user!.id,
-      user_name: userProfile.name,
-      user_phone: userProfile.phone,
-      menu: "Biryani",
-      quantity,
-      date: today,
-      status: "pending",
-    },
-  ])
-  .select()
-  .single();
-
+      .from("orders")
+      .insert([
+        {
+          user_id: user!.id,
+          user_name: userProfile.name,
+          user_phone: userProfile.phone,
+          menu: "Biryani",
+          quantity,
+          date: today,
+          status: "pending",
+        },
+      ])
+      .select()
+      .single();
 
     if (error) {
       setError("Order failed");
+      setTimeout(() => setError(""), 3000);
     } else {
       setMyOrder(data);
       setSuccess("Order placed!");
+      setTimeout(() => setSuccess(""), 3000);
     }
   };
+
   if (loadingPage) {
     return (
       <div style={{ padding: 40, textAlign: "center", fontWeight: 600 }}>
@@ -232,315 +205,268 @@ if (myOrder) {
             color: "#dc3545",
             background: "#fff0f0",
             borderRadius: 12,
-            boxShadow: "0 0 12px rgba(220,53,69,3)",
-border: "2px solid #dc3545",
-animation: "glow 1.5s infinite alternate",
+            border: "2px solid #dc3545",
           }}
         >
-          Canteen Closed Today🚫
+          Canteen Closed Today 🚫
         </div>
       )}
 
       {canteenOpen && (
         <>
-          {/* <h3 className="welcome-ui">
-  Welcome <span>{profile?.name || "User"}</span>
-</h3> */}
-
-
           {menuToday.length > 0 && (
-<h4 className="menu-heading-ui">Today's Menu</h4>
-)}
+            <h4 className="menu-heading-ui">Today's Menu</h4>
+          )}
 
+          {menuToday.length === 0 ? (
+            <div
+              style={{
+                marginTop: 30,
+                padding: 24,
+                background: "#fff7e6",
+                borderRadius: 16,
+                textAlign: "center",
+              }}
+            >
+              Food is being prepared 👨‍🍳
+            </div>
+          ) : (
+            <div className="menu-list-ui">
+              {menuToday.map((item) => (
+                <div className="menu-card-ui" key={item}>
+                  <img src={menuImages[item]} className="menu-img-ui" />
+                  <div className="menu-title-footer-ui">
+                    <span>{item}</span>
+                    <span className="menu-price-ui">
+                      ₹{MENU_PRICES[item] ?? "--"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
+          {/* ✅ Show biryani card whenever biryani is active — ended or not */}
+          {biryaniAvailable && (
+            <div className="order-card-ui">
+              <img src="/biryani.jpg" className="biryani-img-ui" />
 
-{/* WHEN MENU NOT YET SET */}
-{menuToday.length === 0 ? (
-  <div
-    style={{
-      marginTop: 30,
-      padding: 24,
-      background: "#fff7e6",
-      borderRadius: 16,
-      textAlign: "center",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
-    }}
-  >
-    <img
-  src="/cooking.gif"
-  alt="Food preparing"
-  style={{ width: 140, marginBottom: 12 }}
-/>
+              {/* ── ENDED STATE ── */}
+              {biryaniEnded ? (
+                <div style={{ textAlign: "center", padding: "8px 0" }}>
 
+                  {/* ✅ Disabled "Biryani Completed" button */}
+                  <button
+                    disabled
+                    style={{
+                      width: "100%",
+                      background: "#28a745",
+                      color: "#fff",
+                      border: "none",
+                      padding: 14,
+                      borderRadius: 12,
+                      fontWeight: 700,
+                      fontSize: 18,
+                      opacity: 0.85,
+                      cursor: "not-allowed",
+                      marginBottom: 12,
+                    }}
+                  >
+                    Biryani Completed 🍛
+                  </button>
 
-    <div style={{ fontSize: 18, fontWeight: 700, color: "#8b7355" }}>
-      Food is being prepared 👨‍🍳
-    </div>
+                  {/* ✅ Message based on order status */}
+                  {myOrder ? (
+                    <div
+                      style={{
+                        background: myOrder.completed ? "#eafff1" : "#fff3cd",
+                        border: `1px solid ${myOrder.completed ? "#28a745" : "#ffc107"}`,
+                        borderRadius: 10,
+                        padding: "10px 12px",
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: myOrder.completed ? "#1a7a3a" : "#856404",
+                      }}
+                    >
+                      {myOrder.completed
+                        ? `✅ Your order (${myOrder.quantity} plate(s)) is completed!`
+                        : `⏳ Your order (${myOrder.quantity} plate(s)) is still pending — come soon!`}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 14, color: "#888", fontWeight: 600 }}>
+                      Better luck next time 🙏
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  {/* ── NORMAL / CLOSED STATE ── */}
 
-    <div style={{ fontSize: 14, marginTop: 6, color: "#555" }}>
-      Please wait… menu will be updated soon!
-    </div>
-  </div>
-) : (
-  /* MENU CARDS */
-  <div className="menu-list-ui">
-  {menuToday.map((item) => (
-    <div className="menu-card-ui">
-  <img
-    src={menuImages[item]}
-    alt={item}
-    className="menu-img-ui"
-  />
+                  {/* Banner: orders closed */}
+                  {biryaniClosed && (
+                    <div
+                      style={{
+                        background: "#6f42c1",
+                        color: "#fff",
+                        borderRadius: 10,
+                        padding: "10px 14px",
+                        fontWeight: 700,
+                        fontSize: 15,
+                        textAlign: "center",
+                        marginBottom: 12,
+                      }}
+                    >
+                      🚫 Biryani ordering is currently closed
+                    </div>
+                  )}
 
- <div className="menu-title-footer-ui">
-  <span>{item}</span>
-  <span className="menu-price-ui">
-    ₹{MENU_PRICES[item] ?? "--"}
-  </span>
-</div>
+                  {/* Row 1: Quantity (always shown) LEFT + Message RIGHT */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                    {/* Quantity — always visible */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
+                      <span style={{ fontWeight: 700 }}>{quantity}</span>
+                      <button onClick={() => setQuantity(q => Math.min(3, q + 1))}>+</button>
+                    </div>
 
-</div>
+                    {/* Message on right — appears/disappears, no layout shift */}
+                    <div style={{ minWidth: 0 }}>
+                      {success && (
+                        <span style={{ color: "#1a7a3a", fontWeight: 700, fontSize: 13, background: "#eafff1", borderRadius: 6, padding: "3px 10px" }}>
+                          ✅ {success}
+                        </span>
+                      )}
+                      {error && !success && (
+                        <span style={{ color: "#856404", fontWeight: 700, fontSize: 13, background: "#fff3cd", borderRadius: 6, padding: "3px 10px" }}>
+                          ⚠️ {error}
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
-  ))}
-</div>
+                  {/* Row 2: Order/Cancel button */}
+                  <button
+                    onClick={orderBiryani}
+                    style={{
+                      width: "100%",
+                      border: "none",
+                      padding: 14,
+                      borderRadius: 12,
+                      fontWeight: 700,
+                      fontSize: 18,
+                      background: biryaniClosed ? "#aaa" : myOrder ? "#dc3545" : "#ffc107",
+                      color: biryaniClosed ? "#fff" : myOrder ? "#fff" : "#000",
+                    }}
+                  >
+                    {myOrder && biryaniClosed
+                      ? "Order Locked 🔒"
+                      : !myOrder && biryaniClosed
+                      ? "Orders Closed"
+                      : myOrder
+                      ? "Cancel Biryani"
+                      : "Order Biryani"}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
 
-)}
-
-
-
-          {/* BIRYANI SECTION */}
-{biryaniAvailable && (
-  <div className="order-card-ui">
-
-   <div style={{ marginTop: 16 }}>
-
-      {/* 🍛 Image */}
-    <img src="/biryani.jpg" className="biryani-img-ui" />
-
-
-
-      {/* Card body */}
-      <div style={{ padding: 16 }}>
-
-        {!myOrder && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              marginBottom: 12,
-            }}
-          >
-            <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
-
-            <span style={{ fontWeight: 700, fontSize: 18 }}>{quantity}</span>
-
-            <button onClick={() => setQuantity(q => Math.min(3, q + 1))}>+</button>
-
-            <span style={{ fontSize: 12, color: "#8b7355", fontWeight: 600 }}>
-              (upto 3 only)
-            </span>
-          </div>
-        )}
-
-        <button
-          onClick={orderBiryani}
-          style={{
-            width: "100%",
-            background: myOrder ? "#dc3545" : "#ffc107",
-            border: "none",
-            padding: 14,
-            borderRadius: 12,
-            fontWeight: 700,
-            fontSize: 18,
-            color: myOrder ? "#fff" : "#000",
-          }}
-        >
-          {myOrder ? "Cancel Biryani" : "Order Biryani"}
-        </button>
-
-        {!myOrder && (
-          <div
-            style={{
-              marginTop: 6,
-              textAlign: "center",
-              fontSize: 13,
-              color: "#dc3545",
-              fontWeight: 600,
-            }}
-          >
-            Order by 10:01 AM only!!
-          </div>
-        )}
-
-        {success && <div style={{ color: "green" }}>{success}</div>}
-        {error && <div style={{ color: "red" }}>{error}</div>}
-      </div>
-    </div>
-
-  </div>
-)}
-{canteenOpen && biryaniAvailable && myOrder && myOrder.menu === "Biryani" && (
-  <div className="order-confirm-card">
-
-    <div className="order-confirm-info">
-      <h3>Order Status :</h3>
-
-      <p><b>Name:</b> {myOrder.user_name}</p>
-      <p><b>Quantity:</b> {myOrder.quantity}</p>
-
-      <p>
-        <b>Status:</b>{" "}
-        {myOrder.completed ? "Completed ✅" : "Pending 🕒"}
-      </p>
-
-      <p>
-      <b>Date:</b>{" "}
-      {new Date(myOrder.date).toLocaleDateString("en-GB")}
-       </p>
-
-    </div>
-
-      <img
-      src={myOrder.completed ? "/completed.png" : "/confirmed.png"}
-      alt="Order status"
-      className="order-confirm-img"
-      />
-
-
-  </div>
-)}
-
+          {myOrder && (
+            <div className="order-confirm-card">
+              <p><b>Name:</b> {myOrder.user_name}</p>
+              <p><b>Quantity:</b> {myOrder.quantity}</p>
+              <p><b>Status:</b> {myOrder.completed ? "Completed ✅" : "Pending 🕒"}</p>
+            </div>
+          )}
         </>
       )}
-{showTimeoutPopup && (
-  <div
-    className="popup-overlay"
-    onClick={() => {
-      setClosingPopup(true);
-      setTimeout(() => {
-        setShowTimeoutPopup(false);
-        setClosingPopup(false);
-      }, 600);
-    }}
-  >
-    <div
-      className={`popup-card ${closingPopup ? "closing" : ""}`}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <h3>⏰ Time is up</h3>
-      <p>
-        Biryani already prepared.<br />
-        Please contact canteen by phone.
-      </p>
 
-      <button
-        onClick={() => {
-          setClosingPopup(true);
-          setTimeout(() => {
-            setShowTimeoutPopup(false);
-            setClosingPopup(false);
-          }, 600);
-        }}
-      >
-        OK
-      </button>
-    </div>
-  </div>
-)}
-{showBiryaniOverPopup && (
-  <div className="popup-overlay" onClick={() => setShowBiryaniOverPopup(false)}>
-    <div className="popup-card" onClick={(e) => e.stopPropagation()}>
-      <h3>🍛 Biryani Over</h3>
-      <p>
-        The biryani is finished for today.<br />
-        Please come early next time!
-      </p>
+      {/* Biryani Over Popup (biryani_end) — triggered by admin clicking End button */}
+      {showBiryaniEndPopup && (
+        <div className="popup-overlay" onClick={() => setShowBiryaniEndPopup(false)}>
+          <div className="popup-card">
+            <img
+              src="/biryani.jpg"
+              style={{ width: 90, height: 90, borderRadius: "50%", objectFit: "cover", marginBottom: 10 }}
+            />
+            <h3>🍛 Biryani is Almost Over!</h3>
+            <p style={{ marginTop: 6 }}>
+              Come soon — biryani is running out!<br />
+              <span style={{ fontSize: 13, color: "#888" }}>Better luck next time 🙏</span>
+            </p>
+            <button onClick={() => setShowBiryaniEndPopup(false)}>OK</button>
+          </div>
+        </div>
+      )}
 
-      <button onClick={() => setShowBiryaniOverPopup(false)}>
-        OK
-      </button>
-    </div>
-  </div>
-)}
-{showCancelBlockedPopup && (
-  <div
-    className="popup-overlay"
-    onClick={() => setShowCancelBlockedPopup(false)}
-  >
-    <div
-      className="popup-card"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <h3>🚫 Cannot Cancel</h3>
-      <p>
-        The biryani order is already confirmed.<br />
-        It cannot be cancelled now.
-      </p>
+      {/* showBiryaniOverPopup — fallback if someone clicks order when ended */}
+      {showBiryaniOverPopup && (
+        <div className="popup-overlay" onClick={() => setShowBiryaniOverPopup(false)}>
+          <div className="popup-card">
+            <h3>🍛 Biryani Over</h3>
+            <p>Biryani ordering is closed by canteen.</p>
+            <button onClick={() => setShowBiryaniOverPopup(false)}>OK</button>
+          </div>
+        </div>
+      )}
 
-      <button onClick={() => setShowCancelBlockedPopup(false)}>
-        OK
-      </button>
-    </div>
-  </div>
-)}
+      {/* ✅ NEW: Biryani Closed Popup (biryani_closed) */}
+      {showBiryaniClosedPopup && (
+        <div className="popup-overlay" onClick={() => setShowBiryaniClosedPopup(false)}>
+          <div className="popup-card">
+            <h3>🚫 Biryani Orders Closed</h3>
+            <p>Biryani orders are currently closed. Please contact the canteen directly.</p>
+            <p style={{ marginTop: 8, fontWeight: 700, color: "#333" }}>
+              📞 +91 96665 72449
+            </p>
+            <button onClick={() => setShowBiryaniClosedPopup(false)}>OK</button>
+          </div>
+        </div>
+      )}
 
+      {/* Welcome Popup */}
+      {showWelcomePopup && (
+        <div className="popup-overlay">
+          <div className="popup-card">
+            <h2>Welcome to IIMR Canteen 🍽️</h2>
+            <button onClick={() => setShowWelcomePopup(false)}>OK</button>
+          </div>
+        </div>
+      )}
 
-<div className="canteen-info-card">
-  <div className="note-title">NOTE</div>
-  <div className="info-row">
-    <span className="icon">⏰</span>
-    <span className="label">Canteen Timings:</span>
-    <span className="value">12:30 PM – 2:00PM</span>
-  </div>
-<div className="info-row">
-    <span className="icon">📅</span>
-    <span className="label">Canteen Holiday:</span>
-    <span className="value">Saturday & Sunday</span>
-  </div>
-  
-  <div className="info-row">
-    <span className="icon">📞</span>
-    <span className="label">Canteen:</span>
-    <span className="value">+91 96665 72449</span>
-  </div>
-  <div className="info-row">
-    <span className="icon">📧</span>
-    <span className="label">Any Issues or Feedback</span>
-    <a href="mailto:rakeshsamala0505@gmail.com" className="value">Mail Me</a>
-  </div>
-  <div className="info-row">
-    <span className="icon">⚠️</span>
-    <span className="value">Canteen will Open by 12:30 PM</span>
-  </div>
-</div>
+      {/* ✅ Canteen Info Note — always visible */}
+      <div className="canteen-info-card">
+        <div className="note-title">NOTE</div>
+        <div className="info-row">
+          <span className="icon">⏰</span>
+          <span className="label">Canteen Timings:</span>
+          <span className="value">12:30 PM – 1:30 PM</span>
+        </div>
+        <div className="info-row">
+          <span className="icon">📅</span>
+          <span className="label">Canteen Holiday:</span>
+          <span className="value">Saturday & Sunday</span>
+        </div>
+        <div className="info-row">
+          <span className="icon">📞</span>
+          <span className="label">Canteen:</span>
+          <span className="value">+91 96665 72449</span>
+        </div>
+        <div className="info-row">
+          <span className="icon">📧</span>
+          <span className="label">Any Issues or Feedback</span>
+          <a href="mailto:rakeshsamala0505@gmail.com" className="value">Mail Me</a>
+        </div>
+        <div className="info-row">
+          <span className="icon">⚠️</span>
+          <span className="value">Canteen will Open by 12:30 PM</span>
+        </div>
+      </div>
 
-
-{showWelcomePopup && (
-  <div className="popup-overlay">
-    <div className="popup-card">
-
-      <h2>Welcome to IIMR Canteen 🍽️</h2>
-
-      <p style={{ textAlign: "center", fontSize: 14, lineHeight: 1.6 }}>
-        Here you can check Daily menu Items and reserve
-        your biryani.
-      </p>
-
-      <button onClick={() => setShowWelcomePopup(false)}>
-        OK
-      </button>
-
-    </div>
-  </div>
-)}
-
-      {/* FOOTER ALWAYS VISIBLE */}
       <footer
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
           position: "fixed",
           left: "50%",
           bottom: 0,
@@ -549,16 +475,9 @@ animation: "glow 1.5s infinite alternate",
           maxWidth: 480,
           background: "#f9f7f4",
           padding: "12px 16px",
-          borderTop: "1px solid #e0dbd8",
-          zIndex: 100,
         }}
       >
-       <span style={{ color: "#8b7355" }}>
-  Welcome{" "}
-  <strong>{profile?.name ?? user?.email ?? "User"}</strong>
-</span>
-
-
+        <strong>{profile?.name ?? user?.email}</strong>
 
         <button
           style={{
@@ -566,11 +485,7 @@ animation: "glow 1.5s infinite alternate",
             color: "#fff",
             borderRadius: 8,
             padding: "8px 18px",
-            fontWeight: 700,
-            fontSize: 16,
-            boxShadow: "0 2px 8px #dc3545",
             border: "none",
-            cursor: "pointer",
           }}
           onClick={async () => {
             await supabase.auth.signOut();
