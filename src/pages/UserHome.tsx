@@ -332,6 +332,7 @@ const UserHome = () => {
                       <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
                       <span style={{ fontWeight: 700 }}>{quantity}</span>
                       <button onClick={() => setQuantity(q => Math.min(3, q + 1))}>+</button>
+                      <span style={{ fontSize: 12, color: "#8b7355", fontWeight: 600 }}> (upto 3 only) </span>
                     </div>
 
                     {/* Message on right — error only, no layout shift */}
