@@ -44,7 +44,6 @@ const Login = () => {
         return;
       }
 
-      /* ================= USER LOGIN ================= */
     /* ================= USER LOGIN ================= */
 await authService.signIn(formData);
 
@@ -60,16 +59,23 @@ if (!user) {
 
 
       /* 🔒 PROFILE EXISTENCE CHECK */
-      const { data: profile, error: profileError } = await supabase
-        .from("users")
-        .select("id")
-        .eq("id", user.id)
-        .maybeSingle();
+   // 🔧 Auto-create user profile if missing
+const { data: existingProfile } = await supabase
+  .from("users")
+  .select("id")
+  .eq("id", user.id)
+  .maybeSingle();
 
-      if (profileError || !profile) {
-        await supabase.auth.signOut();
-        throw new Error("Your account is inactive or removed. Contact admin.");
-      }
+if (!existingProfile) {
+  await supabase.from("users").insert({
+    id: user.id,
+    email: user.email,
+    name: user.user_metadata?.name || "",
+    phone: user.user_metadata?.phone || "",
+    is_admin: false,
+  });
+}
+
 
       /* ================= SUCCESS ================= */
       setSuccess("Login successful. Redirecting...");
@@ -80,6 +86,8 @@ if (!user) {
       setLoading(false);
     }
   };
+
+  
 
   return (
     <div className="container" style={{ 
