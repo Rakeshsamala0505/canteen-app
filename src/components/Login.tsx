@@ -45,18 +45,19 @@ const Login = () => {
       }
 
       /* ================= USER LOGIN ================= */
-      const authData = await authService.signIn(formData);
-      const user = authData?.session?.user;
+    /* ================= USER LOGIN ================= */
+await authService.signIn(formData);
 
-      if (!user) {
-        throw new Error("Login failed. Please try again.");
-      }
+// ✅ Always fetch fresh user after login
+const { data: refreshed } = await supabase.auth.getUser();
 
-      /* 🔒 EMAIL VERIFICATION CHECK */
-      if (!user.email_confirmed_at) {
-        await supabase.auth.signOut();
-        throw new Error("Please verify your email before logging in.");
-      }
+const user = refreshed.user;
+
+if (!user) {
+  throw new Error("Login failed. Please try again.");
+}
+
+
 
       /* 🔒 PROFILE EXISTENCE CHECK */
       const { data: profile, error: profileError } = await supabase
