@@ -6,12 +6,12 @@ import "../styles/userHome.css";
 const MENU_PRICES: Record<string, number> = {
   Roti: 10,
   Raita: 10,
-  Dal: 20,
-  Sambar: 20,
-  Rice: 20,
-  potato: 20,
-  Chana: 20,
-  Egg: 20,
+  Dal: 10,
+  Sambar: 10,
+  Rice: 10,
+  potato: 10,
+  Chana: 10,
+  Egg: 10,
 };
 
 const UserHome = () => {
@@ -35,7 +35,8 @@ const UserHome = () => {
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
   const [showBiryaniOverPopup, setShowBiryaniOverPopup] = useState(false);
   const [showBiryaniClosedPopup, setShowBiryaniClosedPopup] = useState(false);
-  const [showBiryaniEndPopup, setShowBiryaniEndPopup] = useState(false); // ✅ NEW
+  const [showBiryaniEndPopup, setShowBiryaniEndPopup] = useState(false);
+  const [showOrderLockedPopup, setShowOrderLockedPopup] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
@@ -116,10 +117,9 @@ const UserHome = () => {
     setError("");
     setSuccess("");
 
-    // ✅ CASE 1: Orders closed + user has an existing order → block cancel
+    // ✅ CASE 1: Orders closed + user has an existing order → show popup
     if (biryaniClosed && myOrder) {
-      setError("Order cannot be cancelled once orders are closed.");
-      setTimeout(() => setError(""), 2000);
+      setShowOrderLockedPopup(true);
       return;
     }
 
@@ -295,7 +295,7 @@ const UserHome = () => {
                     >
                       {myOrder.completed
                         ? `✅ Your order (${myOrder.quantity} plate(s)) is completed!`
-                        : `⏳ You order ${myOrder.quantity} plate(s) is still pending — come soon!`}
+                        : `⏳ Your order (${myOrder.quantity} plate(s)) is still pending — come soon!`}
                     </div>
                   ) : (
                     <div style={{ fontSize: 14, color: "#888", fontWeight: 600 }}>
@@ -328,7 +328,7 @@ const UserHome = () => {
                   {/* Row 1: Quantity (always shown) LEFT + Message RIGHT */}
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                     {/* Quantity — always visible */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                       <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
                       <span style={{ fontWeight: 700 }}>{quantity}</span>
                       <button onClick={() => setQuantity(q => Math.min(3, q + 1))}>+</button>
@@ -352,7 +352,7 @@ const UserHome = () => {
                         </span>
                       )}
                       {error && !success && (
-                        <span style={{ color: "#856404", fontWeight: 700, fontSize: 11, background: "#fff3cd",  padding: "3px 3px" }}>
+                        <span style={{ color: "#856404", fontWeight: 700, fontSize: 13, background: "#fff3cd", borderRadius: 6, padding: "3px 10px" }}>
                           ⚠️ {error}
                         </span>
                       )}
@@ -405,6 +405,17 @@ const UserHome = () => {
             </div>
           )}
         </>
+      )}
+
+      {/* ✅ Order Locked Popup — when user tries to cancel after close orders */}
+      {showOrderLockedPopup && (
+        <div className="popup-overlay" onClick={() => setShowOrderLockedPopup(false)}>
+          <div className="popup-card">
+            <h3>🔒 Order Locked</h3>
+            <p>Your order cannot be cancelled once orders are closed by the canteen.</p>
+            <button onClick={() => setShowOrderLockedPopup(false)}>OK</button>
+          </div>
+        </div>
       )}
 
       {/* Biryani Over Popup (biryani_end) — triggered by admin clicking End button */}
