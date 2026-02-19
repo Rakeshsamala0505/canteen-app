@@ -332,6 +332,16 @@ const UserHome = () => {
                       <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
                       <span style={{ fontWeight: 700 }}>{quantity}</span>
                       <button onClick={() => setQuantity(q => Math.min(3, q + 1))}>+</button>
+                       {/* 👉 limit text */}
+  <span
+    style={{
+      fontSize: 12,
+      color: "#8b7355",
+      fontWeight: 600,
+    }}
+  >
+    (up to 3 only)
+  </span>
                     </div>
 
                     {/* Message on right — appears/disappears, no layout shift */}
