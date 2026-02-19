@@ -6,12 +6,12 @@ import "../styles/userHome.css";
 const MENU_PRICES: Record<string, number> = {
   Roti: 10,
   Raita: 10,
-  Dal: 20,
-  Sambar: 20,
-  Rice: 20,
-  potato: 20,
-  Chana: 20,
-  Egg: 20,
+  Dal: 10,
+  Sambar: 10,
+  Rice: 10,
+  potato: 10,
+  Chana: 10,
+  Egg: 10,
 };
 
 const UserHome = () => {
@@ -29,7 +29,6 @@ const UserHome = () => {
   const [myOrder, setMyOrder] = useState<any>(null);
 
   const [quantity, setQuantity] = useState(1);
-  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
@@ -37,6 +36,8 @@ const UserHome = () => {
   const [showBiryaniClosedPopup, setShowBiryaniClosedPopup] = useState(false);
   const [showBiryaniEndPopup, setShowBiryaniEndPopup] = useState(false);
   const [showOrderLockedPopup, setShowOrderLockedPopup] = useState(false);
+  const [showOrderPlacedPopup, setShowOrderPlacedPopup] = useState(false);
+  const [showOrderCancelledPopup, setShowOrderCancelledPopup] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
@@ -115,7 +116,6 @@ const UserHome = () => {
 
   const orderBiryani = async () => {
     setError("");
-    setSuccess("");
 
     // ✅ CASE 1: Orders closed + user has an existing order → show popup
     if (biryaniClosed && myOrder) {
@@ -153,8 +153,8 @@ const UserHome = () => {
     if (myOrder) {
       await supabase.from("orders").delete().eq("id", myOrder.id);
       setMyOrder(null);
-      setSuccess("Order cancelled");
-      setTimeout(() => setSuccess(""), 3000);
+      setShowOrderCancelledPopup(true);
+      setTimeout(() => setShowOrderCancelledPopup(false), 3000);
       return;
     }
 
@@ -179,8 +179,8 @@ const UserHome = () => {
       setTimeout(() => setError(""), 3000);
     } else {
       setMyOrder(data);
-      setSuccess("Order placed!");
-      setTimeout(() => setSuccess(""), 3000);
+      setShowOrderPlacedPopup(true);
+      setTimeout(() => setShowOrderPlacedPopup(false), 3500);
     }
   };
 
@@ -332,26 +332,11 @@ const UserHome = () => {
                       <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
                       <span style={{ fontWeight: 700 }}>{quantity}</span>
                       <button onClick={() => setQuantity(q => Math.min(3, q + 1))}>+</button>
-                       {/* 👉 limit text */}
-  <span
-    style={{
-      fontSize: 12,
-      color: "#8b7355",
-      fontWeight: 600,
-    }}
-  >
-    (up to 3 only)
-  </span>
                     </div>
 
-                    {/* Message on right — appears/disappears, no layout shift */}
+                    {/* Message on right — error only, no layout shift */}
                     <div style={{ minWidth: 0 }}>
-                      {success && (
-                        <span style={{ color: "#1a7a3a", fontWeight: 700, fontSize: 13, background: "#eafff1", borderRadius: 6, padding: "3px 10px" }}>
-                          ✅ {success}
-                        </span>
-                      )}
-                      {error && !success && (
+                      {error && (
                         <span style={{ color: "#856404", fontWeight: 700, fontSize: 13, background: "#fff3cd", borderRadius: 6, padding: "3px 10px" }}>
                           ⚠️ {error}
                         </span>
@@ -405,6 +390,79 @@ const UserHome = () => {
             </div>
           )}
         </>
+      )}
+
+      {/* 🎉 Order Placed Popup with confetti */}
+      {showOrderPlacedPopup && (
+        <div
+          className="popup-overlay"
+          onClick={() => setShowOrderPlacedPopup(false)}
+          style={{ zIndex: 999999 }}
+        >
+          {/* Confetti pieces */}
+          {[...Array(30)].map((_, i) => (
+            <div
+              key={i}
+              style={{
+                position: "fixed",
+                top: "-10px",
+                left: `${Math.random() * 100}%`,
+                width: `${6 + Math.random() * 8}px`,
+                height: `${6 + Math.random() * 8}px`,
+                borderRadius: Math.random() > 0.5 ? "50%" : "2px",
+                background: ["#ffc107", "#28a745", "#dc3545", "#007bff", "#ff69b4", "#ff6600", "#a855f7"][Math.floor(Math.random() * 7)],
+                animation: `confettiFall ${1.5 + Math.random() * 2}s ease-in ${Math.random() * 0.8}s forwards`,
+                pointerEvents: "none",
+              }}
+            />
+          ))}
+
+          <style>{`
+            @keyframes confettiFall {
+              0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+              100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+            }
+            @keyframes popupBounce {
+              0%   { transform: scale(0.5); opacity: 0; }
+              60%  { transform: scale(1.1); opacity: 1; }
+              100% { transform: scale(1);   opacity: 1; }
+            }
+          `}</style>
+
+          <div
+            className="popup-card"
+            style={{ animation: "popupBounce 0.5s ease forwards" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ fontSize: 48, marginBottom: 4 }}>🎉</div>
+            <h3 style={{ color: "#28a745", fontSize: 22, margin: "0 0 6px" }}>Hurray!</h3>
+            <p style={{ fontWeight: 600, color: "#333" }}>Your biryani order is placed!</p>
+            <p style={{ fontSize: 13, color: "#888", marginTop: 4 }}>Come on time and enjoy 🍛</p>
+            <button
+              onClick={() => setShowOrderPlacedPopup(false)}
+              style={{ background: "#28a745", marginTop: 14 }}
+            >
+              Yay! 🎊
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ❌ Order Cancelled Popup */}
+      {showOrderCancelledPopup && (
+        <div className="popup-overlay" onClick={() => setShowOrderCancelledPopup(false)}>
+          <div className="popup-card">
+            <div style={{ fontSize: 40, marginBottom: 4 }}>😔</div>
+            <h3 style={{ color: "#dc3545", margin: "0 0 6px" }}>Order Cancelled</h3>
+            <p style={{ fontWeight: 600, color: "#555" }}>Your biryani order has been cancelled.</p>
+            <button
+              onClick={() => setShowOrderCancelledPopup(false)}
+              style={{ background: "#dc3545", marginTop: 14 }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       )}
 
       {/* ✅ Order Locked Popup — when user tries to cancel after close orders */}
