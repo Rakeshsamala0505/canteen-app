@@ -22,7 +22,7 @@ const Header = () => {
             className="logo-image"
           />
           <div className="header-title">
-            <div className="title-main">IIMR</div>
+            <div className="title-main"></div>
             <div className="title-sub">Canteen</div>
           </div>
         </div>
