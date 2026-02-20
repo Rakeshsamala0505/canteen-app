@@ -22,8 +22,7 @@ const Header = () => {
             className="logo-image"
           />
           <div className="header-title">
-            <div className="title-main"></div>
-            <div className="title-sub">Canteen</div>
+            <div className="title-main">Canteen</div>
           </div>
         </div>
         <div className="header-date">
